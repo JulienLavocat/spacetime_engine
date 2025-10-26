@@ -1,3 +1,10 @@
-[workspace]
-members = ["npc"]
-resolver = "3"
+[package]
+name = "spacetime_engine"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+landmass = { git = "https://github.com/JulienLavocat/landmass.git", branch = "main" }
+spacetimedb = { version = "1.6.0" }
+log = { version = "0.4.28" }
+bon = { version = "3.8.1" }

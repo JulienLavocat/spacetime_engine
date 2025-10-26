@@ -1,7 +1,0 @@
-[package]
-name = "npc"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-landmass = { git = "https://github.com/JulienLavocat/landmass.git", branch = "main" }
