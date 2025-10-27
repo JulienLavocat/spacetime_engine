@@ -1,8 +1,10 @@
+use std::collections::HashMap;
+
 use bon::{Builder, builder};
 
 use spacetimedb::{ReducerContext, ScheduleAt, Table, table};
 
-use crate::navigation::{self};
+use crate::navigation::{self, NavigationAgent, NavigationAgentId};
 
 pub type WorldId = u64;
 
@@ -15,6 +17,8 @@ pub struct World {
     pub id: WorldId,
     #[builder(default = 4)]
     pub navigation_substeps: u16,
+    #[builder(default = false)]
+    pub debug: bool,
 }
 
 impl World {
@@ -23,7 +27,17 @@ impl World {
     }
 }
 
-pub fn tick_world(ctx: &ReducerContext, world_id: WorldId, scheduled_at: ScheduleAt) {
+pub fn tick_world(
+    ctx: &ReducerContext,
+    world_id: WorldId,
+    scheduled_at: ScheduleAt,
+    post_navigation_hook: fn(
+        &ReducerContext,
+        WorldId,
+        f32,
+        &HashMap<NavigationAgentId, NavigationAgent>,
+    ),
+) {
     let delta_time = match scheduled_at {
         ScheduleAt::Interval(duration) => duration.to_duration_abs().as_secs_f32(),
         _ => panic!("Expected ScheduleAt to be Interval"),
@@ -36,5 +50,6 @@ pub fn tick_world(ctx: &ReducerContext, world_id: WorldId, scheduled_at: Schedul
         .find(world_id)
         .expect("World not found");
 
-    navigation::tick_navigation(ctx, world, delta_time);
+    let updated_agents = navigation::tick_navigation(ctx, world, delta_time);
+    post_navigation_hook(ctx, world_id, delta_time, &updated_agents);
 }

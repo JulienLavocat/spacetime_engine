@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 
 use bon::Builder;
 use landmass::{
@@ -10,6 +10,7 @@ use spacetimedb::{ReducerContext, Table, table};
 use crate::{
     math::Vec3,
     navigation::coordinates::XYZ,
+    utils::LogStopwatch,
     world::{World, WorldId},
 };
 
@@ -96,9 +97,14 @@ impl NavigationAgent {
     }
 }
 
-pub(crate) fn tick_navigation(ctx: &ReducerContext, world: World, delta_time: f32) {
+pub(crate) fn tick_navigation(
+    ctx: &ReducerContext,
+    world: World,
+    delta_time: f32,
+) -> HashMap<NavigationAgentId, NavigationAgent> {
     let mut archipelago = Archipelago::<XYZ>::new(ArchipelagoOptions::from_agent_radius(1.0));
 
+    let rebuild_sw = LogStopwatch::new(&world, "REBUILD_ARCHIPELAGO");
     for navmesh in ctx.db.steng_nav_mesh().world_id().filter(world.id) {
         let translation = navmesh.translation;
         let rotation = navmesh.rotation;
@@ -138,13 +144,18 @@ pub(crate) fn tick_navigation(ctx: &ReducerContext, world: World, delta_time: f3
         })
         .collect();
 
+    rebuild_sw.end();
+
     // In principe re-creating the archipelago every tick is fine but
     // we should save the path computed for each agent to avoid
     // recomputing them every tick.
     let substep_delta_time = delta_time / world.navigation_substeps as f32;
-    for _ in 0..world.navigation_substeps {
-        archipelago.update(&mut ctx.rng(), substep_delta_time);
-    }
+    let update_sw = LogStopwatch::new(&world, "UPDATE_ARCHIPELAGO");
+    archipelago.update(&mut ctx.rng(), substep_delta_time);
+    update_sw.end();
+
+    let update_sw = LogStopwatch::new(&world, "UPDATE_AGENTS");
+    let mut updated_agents = Vec::with_capacity(agents.len());
 
     for (agent_id, mut navagent) in agents {
         let agent = archipelago.get_agent(agent_id).unwrap();
@@ -154,6 +165,10 @@ pub(crate) fn tick_navigation(ctx: &ReducerContext, world: World, delta_time: f3
         navagent.velocity = velocity;
         navagent.state = agent.state().into();
 
-        ctx.db.steng_navigation_agent().id().update(navagent);
+        let agent = ctx.db.steng_navigation_agent().id().update(navagent);
+        updated_agents.push(agent);
     }
+    update_sw.end();
+
+    updated_agents.into_iter().map(|a| (a.id, a)).collect()
 }
