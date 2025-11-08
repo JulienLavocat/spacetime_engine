@@ -14,11 +14,14 @@ pub struct World {
     #[primary_key]
     #[auto_inc]
     #[builder(default = 0)]
+    /// The unique ID of the world.
     pub id: WorldId,
-    #[builder(default = 4)]
-    pub navigation_substeps: u16,
     #[builder(default = false)]
+    /// If true, enables debug logging and print timings for various systems.
     pub debug: bool,
+    #[builder(default = 0.05)]
+    /// The rate at which to sample debug information, between 0.0 and 1.0.
+    pub debug_sample_rate: f32,
 }
 
 impl World {

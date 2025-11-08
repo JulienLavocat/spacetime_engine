@@ -124,6 +124,46 @@ pub(crate) fn tick_navigation(
     world: World,
     delta_time: f32,
 ) -> HashMap<NavigationAgentId, NavigationAgent> {
+    let mut sw = LogStopwatch::new(ctx, &world, "navigation_tick".to_string());
+    // In principe re-creating the archipelago every tick is fine but
+    // we should save the path computed for each agent to avoid
+    // recomputing them every tick.
+    let (mut archipelago, agents) = build_archipelago(ctx, &world, &mut sw);
+
+    sw.span("update_archipelago");
+    archipelago.update(&mut ctx.rng(), delta_time);
+
+    sw.span("update_agents");
+    let mut updated_agents = Vec::with_capacity(agents.len());
+
+    for (agent_id, mut navagent) in agents {
+        let agent = archipelago.get_agent(agent_id).unwrap();
+        let velocity = agent.get_desired_velocity();
+
+        navagent.velocity = *velocity;
+        let new_pos = navagent.position + velocity * delta_time;
+        // TODO: Move this into another reducer that runs less frequently on agents outside of navigation meshes
+        if let Ok(point) = archipelago.sample_point(
+            new_pos,
+            &archipelago.archipelago_options.point_sample_distance,
+        ) {
+            navagent.position = point.point();
+        }
+
+        navagent.state = agent.state().into();
+        let agent = ctx.db.steng_navigation_agent().id().update(navagent);
+        updated_agents.push(agent);
+    }
+    sw.end();
+
+    updated_agents.into_iter().map(|a| (a.id, a)).collect()
+}
+
+fn build_archipelago(
+    ctx: &ReducerContext,
+    world: &World,
+    sw: &mut LogStopwatch,
+) -> (Archipelago<XYZ>, Vec<(AgentId, NavigationAgent)>) {
     let radius = 0.5;
     let mut archipelago = Archipelago::<XYZ>::new(ArchipelagoOptions {
         point_sample_distance: PointSampleDistance3d {
@@ -139,14 +179,14 @@ pub(crate) fn tick_navigation(
         reached_destination_avoidance_responsibility: 0.1,
     });
 
-    let rebuild_sw = LogStopwatch::new(&world, "REBUILD_ARCHIPELAGO");
+    sw.span("load_navmeshes");
     for navmesh in ctx.db.steng_nav_mesh().world_id().filter(world.id) {
         let translation = navmesh.translation;
         let rotation = navmesh.rotation;
         let navmesh: NavigationMesh<XYZ> = navmesh.into();
 
         // TODO: Find a way to remove this validation step on every tick,
-        // perhaps by storing the validated navmesh in the database.
+        // perhaps by storing the validated navmesh in the database
         let valid_navmesh = Arc::new(navmesh.validate().expect("Invalid navmesh"));
 
         archipelago.add_island(Island::new(
@@ -158,6 +198,7 @@ pub(crate) fn tick_navigation(
         ));
     }
 
+    sw.span("load_agents");
     let agents: Vec<(AgentId, NavigationAgent)> = ctx
         .db
         .steng_navigation_agent()
@@ -179,38 +220,5 @@ pub(crate) fn tick_navigation(
         })
         .collect();
 
-    rebuild_sw.end();
-
-    // In principe re-creating the archipelago every tick is fine but
-    // we should save the path computed for each agent to avoid
-    // recomputing them every tick.
-    let substep_delta_time = delta_time / world.navigation_substeps as f32;
-    let update_sw = LogStopwatch::new(&world, "UPDATE_ARCHIPELAGO");
-    archipelago.update(&mut ctx.rng(), substep_delta_time);
-    update_sw.end();
-
-    let update_sw = LogStopwatch::new(&world, "UPDATE_AGENTS");
-    let mut updated_agents = Vec::with_capacity(agents.len());
-
-    for (agent_id, mut navagent) in agents {
-        let agent = archipelago.get_agent(agent_id).unwrap();
-        let velocity = agent.get_desired_velocity();
-
-        navagent.velocity = *velocity;
-        let new_pos = navagent.position + velocity * delta_time;
-        // TODO: Move this into another reducer that runs less frequently on agents outside of navigation meshes
-        if let Ok(point) = archipelago.sample_point(
-            new_pos,
-            &archipelago.archipelago_options.point_sample_distance,
-        ) {
-            navagent.position = point.point();
-        }
-
-        navagent.state = agent.state().into();
-        let agent = ctx.db.steng_navigation_agent().id().update(navagent);
-        updated_agents.push(agent);
-    }
-    update_sw.end();
-
-    updated_agents.into_iter().map(|a| (a.id, a)).collect()
+    (archipelago, agents)
 }
