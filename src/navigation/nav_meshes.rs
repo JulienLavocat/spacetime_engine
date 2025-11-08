@@ -1,12 +1,13 @@
 use crate::{math::Vec3, navigation::XYZ, world::WorldId};
 use bon::Builder;
 use landmass::NavigationMesh;
+use serde::Deserialize;
 use spacetimedb::{Table, table};
 
 pub type NavMeshId = u64;
 
 #[table(name = steng_nav_mesh)]
-#[derive(Clone, Debug, Builder)]
+#[derive(Clone, Debug, Builder, Deserialize)]
 pub struct NavMesh {
     #[primary_key]
     #[auto_inc]

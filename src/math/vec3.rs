@@ -1,9 +1,10 @@
 use std::ops::{Add, AddAssign, Mul, MulAssign};
 
 use landmass::Vec3 as LmVec3;
+use serde::Deserialize;
 use spacetimedb::SpacetimeType;
 
-#[derive(SpacetimeType, Clone, Debug, Copy, PartialEq, Default)]
+#[derive(SpacetimeType, Clone, Debug, Copy, PartialEq, Default, Deserialize)]
 pub struct Vec3 {
     pub x: f32,
     pub y: f32,
