@@ -1,23 +1,28 @@
 use crate::{
-    math::Vec3,
-    navigation::{NavMesh, coordinates::XYZ},
+    navigation::{ExternalNavMesh, coordinates::XYZ, validated_navmesh::NavMesh},
+    utils::WorldEntity,
+    world::WorldId,
 };
 use landmass::NavigationMesh;
+use spacetimedb::ReducerContext;
 
-pub fn convert_godot_navmesh_to_landmass(nav: NavMesh) -> NavigationMesh<XYZ> {
-    let vertices: Vec<Vec3> = nav.vertices;
+pub fn import_external_navmesh(
+    ctx: &ReducerContext,
+    world_id: WorldId,
+    exteranal_navmesh: ExternalNavMesh,
+) {
+    let translation = exteranal_navmesh.translation;
+    let rotation = exteranal_navmesh.rotation;
 
-    let polygons: Vec<Vec<usize>> = nav
-        .polygons
-        .iter()
-        .map(|poly| poly.iter().map(|i| *i as usize).collect())
-        .collect();
-    let polygon_count = polygons.len();
+    let lm_nav_mesh: NavigationMesh<XYZ> = exteranal_navmesh.into();
+    let validated_navmesh = lm_nav_mesh.validate().expect("Failed to validate navmesh");
 
-    NavigationMesh {
-        vertices,
-        polygons,
-        polygon_type_indices: vec![0; polygon_count],
-        height_mesh: None,
-    }
+    let encoded = bincode::encode_to_vec(validated_navmesh, bincode::config::standard());
+
+    let mut navmesh: NavMesh = validated_navmesh.into();
+    navmesh.translation = translation;
+    navmesh.rotation = rotation;
+    navmesh.world_id = world_id;
+
+    navmesh.insert(ctx);
 }

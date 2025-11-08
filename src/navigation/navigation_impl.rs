@@ -2,15 +2,18 @@ use std::{collections::HashMap, sync::Arc};
 
 use bon::Builder;
 use landmass::{
-    Agent, AgentId, AgentState as LmAgentState, Archipelago, ArchipelagoOptions, Island,
-    NavigationMesh, PointSampleDistance3d, Transform,
+    Agent, AgentId, Archipelago, ArchipelagoOptions, Island, PointSampleDistance3d, Transform,
+    ValidNavigationMesh,
 };
-use log::debug;
-use spacetimedb::{ReducerContext, Table, table};
+use spacetimedb::{ReducerContext, Table, log_stopwatch::LogStopwatch as StdbStopWatch, table};
 
 use crate::{
     math::Vec3,
-    navigation::{AgentState, TargetReachedCondition, coordinates::XYZ, steng_nav_mesh},
+    navigation::{
+        AgentState, TargetReachedCondition,
+        coordinates::XYZ,
+        validated_navmesh::{NavMesh, steng_navmesh},
+    },
     utils::{LogStopwatch, WorldEntity},
     world::{World, WorldId},
 };
@@ -180,23 +183,20 @@ fn build_archipelago(
     });
 
     sw.span("load_navmeshes");
-    for navmesh in ctx.db.steng_nav_mesh().world_id().filter(world.id) {
+    for navmesh in ctx.db.steng_navmesh().world_id().filter(world.id) {
         let translation = navmesh.translation;
         let rotation = navmesh.rotation;
-        let navmesh: NavigationMesh<XYZ> = navmesh.into();
-
-        // TODO: Find a way to remove this validation step on every tick,
-        // perhaps by storing the validated navmesh in the database
-        let valid_navmesh = Arc::new(navmesh.validate().expect("Invalid navmesh"));
+        let navmesh: Arc<ValidNavigationMesh<XYZ>> = Arc::new(navmesh.into());
 
         archipelago.add_island(Island::new(
             Transform {
                 translation,
                 rotation,
             },
-            valid_navmesh,
+            navmesh,
         ));
     }
+    sw.end();
 
     sw.span("load_agents");
     let agents: Vec<(AgentId, NavigationAgent)> = ctx

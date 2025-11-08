@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-landmass = { git = "https://github.com/JulienLavocat/landmass.git", branch = "main" }
+landmass = { path = "../../landmass/crates/landmass" }
 spacetimedb = { version = "1.6.0" }
 log = { version = "0.4.28" }
 bon = { version = "3.8.1" }
 serde = { version = "1.0.228", features = ["derive"] }
+bincode = "2.0.1"
