@@ -3,6 +3,7 @@ use landmass::{CoordinateSystem, PointSampleDistance3d};
 use crate::math::Vec3;
 
 /// A coordinate system matching convention: X right, Y up, Z forward.
+#[allow(clippy::upper_case_acronyms)]
 pub struct XYZ;
 
 impl CoordinateSystem for XYZ {

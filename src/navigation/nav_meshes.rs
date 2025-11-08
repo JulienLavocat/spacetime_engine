@@ -1,8 +1,11 @@
-use crate::{math::Vec3, navigation::XYZ, world::WorldId};
+use std::collections::HashMap;
+
 use bon::Builder;
 use landmass::NavigationMesh;
 use serde::Deserialize;
-use spacetimedb::{Table, table};
+use spacetimedb::{ReducerContext, Table, table};
+
+use crate::{math::Vec3, navigation::coordinates::XYZ, utils::WorldEntity, world::WorldId};
 
 pub type NavMeshId = u64;
 
@@ -32,8 +35,46 @@ impl NavMesh {
     pub fn insert(self, ctx: &spacetimedb::ReducerContext) -> Self {
         ctx.db.steng_nav_mesh().insert(self)
     }
-    pub fn delete(ctx: &spacetimedb::ReducerContext, id: NavMeshId) {
-        ctx.db.steng_nav_mesh().id().delete(id);
+}
+
+impl WorldEntity for NavMesh {
+    fn insert(self, ctx: &ReducerContext) -> Self {
+        ctx.db.steng_nav_mesh().insert(self)
+    }
+
+    fn find(ctx: &ReducerContext, id: u64) -> Option<Self> {
+        ctx.db.steng_nav_mesh().id().find(id)
+    }
+
+    fn as_map(ctx: &ReducerContext, world_id: WorldId) -> HashMap<u64, Self> {
+        ctx.db
+            .steng_nav_mesh()
+            .world_id()
+            .filter(world_id)
+            .map(|nav_mesh| (nav_mesh.id, nav_mesh))
+            .collect()
+    }
+
+    fn as_vec(ctx: &ReducerContext, world_id: WorldId) -> Vec<Self> {
+        ctx.db
+            .steng_nav_mesh()
+            .world_id()
+            .filter(world_id)
+            .collect()
+    }
+
+    fn update(self, ctx: &ReducerContext) -> Self {
+        ctx.db.steng_nav_mesh().id().update(self)
+    }
+
+    fn delete(&self, ctx: &ReducerContext) {
+        ctx.db.steng_nav_mesh().id().delete(self.id);
+    }
+
+    fn clear(ctx: &ReducerContext, world_id: WorldId) {
+        for nav_mesh in ctx.db.steng_nav_mesh().world_id().filter(world_id) {
+            nav_mesh.delete(ctx);
+        }
     }
 }
 

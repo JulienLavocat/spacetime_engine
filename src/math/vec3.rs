@@ -111,6 +111,26 @@ impl MulAssign<f32> for Vec3 {
     }
 }
 
+impl Mul<f32> for &Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, scalar: f32) -> Vec3 {
+        Vec3 {
+            x: self.x * scalar,
+            y: self.y * scalar,
+            z: self.z * scalar,
+        }
+    }
+}
+
+impl MulAssign<f32> for &mut Vec3 {
+    fn mul_assign(&mut self, scalar: f32) {
+        self.x *= scalar;
+        self.y *= scalar;
+        self.z *= scalar;
+    }
+}
+
 impl From<&Vec3> for Vec3 {
     fn from(v: &Vec3) -> Self {
         *v
