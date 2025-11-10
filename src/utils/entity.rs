@@ -12,6 +12,8 @@ pub trait WorldEntity {
     where
         Self: Sized;
 
+    fn iter(ctx: &ReducerContext, world_id: WorldId) -> impl Iterator<Item = Self>;
+
     /// Get all entities as a map keyed by their ID for a specific world
     fn as_map(ctx: &ReducerContext, world_id: WorldId) -> std::collections::HashMap<u64, Self>
     where

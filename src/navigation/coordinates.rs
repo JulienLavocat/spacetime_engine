@@ -1,9 +1,10 @@
-use landmass::{CoordinateSystem, PointSampleDistance3d};
-
 use crate::math::Vec3;
+use landmass::{CoordinateSystem, PointSampleDistance3d};
+use serde::{Deserialize, Serialize};
 
 /// A coordinate system matching convention: X right, Y up, Z forward.
 #[allow(clippy::upper_case_acronyms)]
+#[derive(Serialize, Deserialize)]
 pub struct XYZ;
 
 impl CoordinateSystem for XYZ {

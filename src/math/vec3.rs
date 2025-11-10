@@ -1,10 +1,13 @@
-use std::ops::{Add, AddAssign, Mul, MulAssign};
+use std::{
+    fmt::Display,
+    ops::{Add, AddAssign, Mul, MulAssign},
+};
 
 use landmass::Vec3 as LmVec3;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use spacetimedb::SpacetimeType;
 
-#[derive(SpacetimeType, Clone, Debug, Copy, PartialEq, Default, Deserialize)]
+#[derive(SpacetimeType, Clone, Debug, Copy, PartialEq, Default, Deserialize, Serialize)]
 pub struct Vec3 {
     pub x: f32,
     pub y: f32,
@@ -28,6 +31,12 @@ impl Vec3 {
             y: value,
             z: value,
         }
+    }
+}
+
+impl Display for Vec3 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Vec3({}, {}, {})", self.x, self.y, self.z)
     }
 }
 

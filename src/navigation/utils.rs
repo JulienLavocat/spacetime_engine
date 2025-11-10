@@ -17,12 +17,14 @@ pub fn import_external_navmesh(
     let lm_nav_mesh: NavigationMesh<XYZ> = exteranal_navmesh.into();
     let validated_navmesh = lm_nav_mesh.validate().expect("Failed to validate navmesh");
 
-    let encoded = bincode::encode_to_vec(validated_navmesh, bincode::config::standard());
-
-    let mut navmesh: NavMesh = validated_navmesh.into();
-    navmesh.translation = translation;
-    navmesh.rotation = rotation;
-    navmesh.world_id = world_id;
-
-    navmesh.insert(ctx);
+    let data = bincode::serde::encode_to_vec(validated_navmesh, bincode::config::standard())
+        .expect("Failed to encode navmesh");
+    NavMesh {
+        id: 0,
+        world_id,
+        translation,
+        rotation,
+        data,
+    }
+    .insert(ctx);
 }
