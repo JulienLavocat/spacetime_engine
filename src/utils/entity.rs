@@ -12,6 +12,7 @@ pub trait WorldEntity {
     where
         Self: Sized;
 
+    /// Get an iterator over all entities for a specific world
     fn iter(ctx: &ReducerContext, world_id: WorldId) -> impl Iterator<Item = Self>;
 
     /// Get all entities as a map keyed by their ID for a specific world
@@ -43,6 +44,9 @@ pub trait Entity {
     fn find(ctx: &ReducerContext, id: u64) -> Option<Self>
     where
         Self: Sized;
+
+    /// Get an iterator over all entities
+    fn iter(ctx: &ReducerContext) -> impl Iterator<Item = Self>;
 
     /// Get all entities as a map keyed by their ID
     fn as_map(ctx: &ReducerContext) -> std::collections::HashMap<u64, Self>

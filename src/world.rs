@@ -4,7 +4,11 @@ use bon::{Builder, builder};
 
 use spacetimedb::{ReducerContext, ScheduleAt, Table, table};
 
-use crate::navigation::{self, NavigationAgent, NavigationAgentId};
+use crate::{
+    behavior,
+    navigation::{self, NavigationAgent, NavigationAgentId},
+    utils::Entity,
+};
 
 pub type WorldId = u64;
 
@@ -26,9 +30,43 @@ pub struct World {
     pub debug_sample_rate: f32,
 }
 
-impl World {
-    pub fn insert(self, ctx: &ReducerContext) -> Self {
+impl Entity for World {
+    fn insert(self, ctx: &ReducerContext) -> Self {
         ctx.db.steng_world().insert(self)
+    }
+
+    fn find(ctx: &ReducerContext, id: u64) -> Option<Self> {
+        ctx.db.steng_world().id().find(id)
+    }
+
+    fn iter(ctx: &ReducerContext) -> impl Iterator<Item = Self> {
+        ctx.db.steng_world().iter()
+    }
+
+    fn as_map(ctx: &ReducerContext) -> std::collections::HashMap<u64, Self> {
+        ctx.db
+            .steng_world()
+            .iter()
+            .map(|world| (world.id, world))
+            .collect()
+    }
+
+    fn as_vec(ctx: &ReducerContext) -> Vec<Self> {
+        ctx.db.steng_world().iter().collect()
+    }
+
+    fn update(self, ctx: &ReducerContext) -> Self {
+        ctx.db.steng_world().id().update(self)
+    }
+
+    fn delete(&self, ctx: &ReducerContext) {
+        ctx.db.steng_world().id().delete(self.id);
+    }
+
+    fn clear(ctx: &ReducerContext) {
+        ctx.db.steng_world().iter().for_each(|world| {
+            world.delete(ctx);
+        });
     }
 }
 
@@ -48,12 +86,7 @@ pub fn tick_world(
         _ => panic!("Expected ScheduleAt to be Interval"),
     };
 
-    let world = ctx
-        .db
-        .steng_world()
-        .id()
-        .find(world_id)
-        .expect("World not found");
+    let world = World::find(ctx, world_id).expect("World not found");
 
     let updated_agents = navigation::tick_navigation(ctx, world, delta_time);
     post_navigation_hook(ctx, world_id, delta_time, &updated_agents);

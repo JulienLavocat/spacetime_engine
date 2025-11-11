@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, AddAssign, Mul, MulAssign},
+    ops::{Add, AddAssign, Mul, MulAssign, Sub},
 };
 
 use landmass::Vec3 as LmVec3;
@@ -31,6 +31,46 @@ impl Vec3 {
             y: value,
             z: value,
         }
+    }
+
+    pub fn length(&self) -> f32 {
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
+    }
+
+    pub fn normalize(&self) -> Self {
+        let len = self.length();
+        if len > 0.0 {
+            Self {
+                x: self.x / len,
+                y: self.y / len,
+                z: self.z / len,
+            }
+        } else {
+            Self::ZERO
+        }
+    }
+
+    pub fn dot(&self, other: &Self) -> f32 {
+        self.x * other.x + self.y * other.y + self.z * other.z
+    }
+
+    pub fn cross(&self, other: &Self) -> Self {
+        Self {
+            x: self.y * other.z - self.z * other.y,
+            y: self.z * other.x - self.x * other.z,
+            z: self.x * other.y - self.y * other.x,
+        }
+    }
+
+    pub fn distance(&self, other: &Self) -> f32 {
+        (*self - *other).length()
+    }
+
+    pub fn distance_squared(&self, other: &Self) -> f32 {
+        let dx = self.x - other.x;
+        let dy = self.y - other.y;
+        let dz = self.z - other.z;
+        dx * dx + dy * dy + dz * dz
     }
 }
 
@@ -137,6 +177,54 @@ impl MulAssign<f32> for &mut Vec3 {
         self.x *= scalar;
         self.y *= scalar;
         self.z *= scalar;
+    }
+}
+
+impl Sub for Vec3 {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+        }
+    }
+}
+
+impl Sub<&Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, other: &Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+        }
+    }
+}
+
+impl Sub<f32> for Vec3 {
+    type Output = Self;
+
+    fn sub(self, scalar: f32) -> Self {
+        Self {
+            x: self.x - scalar,
+            y: self.y - scalar,
+            z: self.z - scalar,
+        }
+    }
+}
+
+impl Sub<f32> for &Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, scalar: f32) -> Vec3 {
+        Vec3 {
+            x: self.x - scalar,
+            y: self.y - scalar,
+            z: self.z - scalar,
+        }
     }
 }
 

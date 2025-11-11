@@ -72,6 +72,12 @@ dependencies = [
 
 [[package]]
 name = "bitflags"
+version = "1.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
+
+[[package]]
+name = "bitflags"
 version = "2.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "812e12b5285cc515a9c72a5c1d3b6d46a19dac5acfef5265968c166106e31dd3"
@@ -595,7 +601,7 @@ dependencies = [
 [[package]]
 name = "landmass"
 version = "0.9.1"
-source = "git+https://github.com/JulienLavocat/landmass?rev=f0796184a29dbd6a6c0bf366a04fc33aebf08bdc#f0796184a29dbd6a6c0bf366a04fc33aebf08bdc"
+source = "git+https://github.com/JulienLavocat/landmass?rev=6e97b9ad7a8a9b0ed606e8ba1e35b2d2a05afda4#6e97b9ad7a8a9b0ed606e8ba1e35b2d2a05afda4"
 dependencies = [
  "bincode",
  "disjoint",
@@ -642,6 +648,44 @@ checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 dependencies = [
  "autocfg",
  "libm",
+]
+
+[[package]]
+name = "piston-ai_behavior"
+version = "0.33.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "579ba18005e9f674f78e9f627f454ef1380bb23ec49b2a70cc13c18049c1709f"
+dependencies = [
+ "pistoncore-input",
+ "serde",
+ "serde_derive",
+]
+
+[[package]]
+name = "piston-float"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad78bf43dcf80e8f950c92b84f938a0fc7590b7f6866fbcbeca781609c115590"
+
+[[package]]
+name = "piston-viewport"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61ecaf8ae0d71dd9cdbbd8662b47659621c09430ff3cb880d154858d3b8ac001"
+dependencies = [
+ "piston-float",
+]
+
+[[package]]
+name = "pistoncore-input"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2977fed6eb16c554fd445a09a50c8a0c250f4c50f752be46a7bd9dcc5ba471f0"
+dependencies = [
+ "bitflags 1.3.2",
+ "piston-viewport",
+ "serde",
+ "serde_derive",
 ]
 
 [[package]]
@@ -851,6 +895,7 @@ dependencies = [
  "bon",
  "landmass",
  "log",
+ "piston-ai_behavior",
  "serde",
  "spacetimedb",
 ]
@@ -903,7 +948,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ba57c8f1983bb144ee7e1ff28aa5882ca437f67c14a14daad4bf61d31f7040d"
 dependencies = [
  "anyhow",
- "bitflags",
+ "bitflags 2.10.0",
  "blake3",
  "chrono",
  "derive_more",
@@ -922,7 +967,7 @@ version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1dcd64c6970ca59e7b71e51952cf1a71bae2652b1eb736c19a7e528f3874894a"
 dependencies = [
- "bitflags",
+ "bitflags 2.10.0",
  "either",
  "itertools 0.12.1",
  "nohash-hasher",
@@ -936,7 +981,7 @@ checksum = "eae61d8f88bda21f56c143bc9b4ddc20100ff08ae4fed0b9444509f7c3ca4339"
 dependencies = [
  "anyhow",
  "arrayvec",
- "bitflags",
+ "bitflags 2.10.0",
  "bytemuck",
  "bytes",
  "chrono",
