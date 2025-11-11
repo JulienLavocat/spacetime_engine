@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-landmass = { path = "../../landmass/crates/landmass" }
+landmass = { git = "https://github.com/JulienLavocat/landmass", rev = "f0796184a29dbd6a6c0bf366a04fc33aebf08bdc" }
 spacetimedb = { version = "1.6.0" }
 log = { version = "0.4.28" }
 bon = { version = "3.8.1" }

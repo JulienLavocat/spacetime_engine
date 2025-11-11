@@ -291,6 +291,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "disjoint"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c37b399c91d093763e38c7a57a740e0005e30e5aff7132e791aada5eef3fed99"
+
+[[package]]
 name = "dodgy_2d"
 version = "0.5.5"
 source = "git+https://github.com/JulienLavocat/dodgy?rev=a3c36fb9f5c5b70f8eb3c4439be25600a974deea#a3c36fb9f5c5b70f8eb3c4439be25600a974deea"
@@ -589,8 +595,10 @@ dependencies = [
 [[package]]
 name = "landmass"
 version = "0.9.1"
+source = "git+https://github.com/JulienLavocat/landmass?rev=f0796184a29dbd6a6c0bf366a04fc33aebf08bdc#f0796184a29dbd6a6c0bf366a04fc33aebf08bdc"
 dependencies = [
  "bincode",
+ "disjoint",
  "dodgy_2d",
  "geo",
  "glam 0.30.8",
