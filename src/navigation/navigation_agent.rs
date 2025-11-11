@@ -5,7 +5,7 @@ use spacetimedb::{ReducerContext, Table, table};
 
 use crate::{
     math::Vec3,
-    navigation::{AgentState, TargetReachedCondition},
+    navigation::{NavigationState, TargetReachedCondition},
     utils::WorldEntity,
     world::WorldId,
 };
@@ -39,8 +39,8 @@ pub struct NavigationAgent {
     /// detrimental to be performance.
     pub current_target: Option<Vec3>,
     /// The state of the agent.
-    #[builder(default = AgentState::Idle)]
-    pub state: AgentState,
+    #[builder(default = NavigationState::Idle)]
+    pub state: NavigationState,
     /// The condition to test for reaching the target.
     #[builder(default = TargetReachedCondition::Distance(None))]
     pub target_reached_condition: TargetReachedCondition,

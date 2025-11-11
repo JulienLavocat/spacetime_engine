@@ -1,7 +1,7 @@
 use spacetimedb::SpacetimeType;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, SpacetimeType)]
-pub enum AgentState {
+pub enum NavigationState {
     /// The agent is idle, due to not having a target. Note this does not mean
     /// that they are motionless. An agent will still avoid nearby agents.
     Idle,
@@ -26,34 +26,34 @@ pub enum AgentState {
     Paused,
 }
 
-impl From<landmass::AgentState> for AgentState {
+impl From<landmass::AgentState> for NavigationState {
     fn from(state: landmass::AgentState) -> Self {
         match state {
-            landmass::AgentState::Idle => AgentState::Idle,
-            landmass::AgentState::ReachedTarget => AgentState::ReachedTarget,
-            landmass::AgentState::ReachedAnimationLink => AgentState::ReachedAnimationLink,
-            landmass::AgentState::UsingAnimationLink => AgentState::UsingAnimationLink,
-            landmass::AgentState::Moving => AgentState::Moving,
-            landmass::AgentState::AgentNotOnNavMesh => AgentState::AgentNotOnNavMesh,
-            landmass::AgentState::TargetNotOnNavMesh => AgentState::TargetNotOnNavMesh,
-            landmass::AgentState::NoPath => AgentState::NoPath,
-            landmass::AgentState::Paused => AgentState::Paused,
+            landmass::AgentState::Idle => NavigationState::Idle,
+            landmass::AgentState::ReachedTarget => NavigationState::ReachedTarget,
+            landmass::AgentState::ReachedAnimationLink => NavigationState::ReachedAnimationLink,
+            landmass::AgentState::UsingAnimationLink => NavigationState::UsingAnimationLink,
+            landmass::AgentState::Moving => NavigationState::Moving,
+            landmass::AgentState::AgentNotOnNavMesh => NavigationState::AgentNotOnNavMesh,
+            landmass::AgentState::TargetNotOnNavMesh => NavigationState::TargetNotOnNavMesh,
+            landmass::AgentState::NoPath => NavigationState::NoPath,
+            landmass::AgentState::Paused => NavigationState::Paused,
         }
     }
 }
 
-impl From<AgentState> for landmass::AgentState {
-    fn from(state: AgentState) -> Self {
+impl From<NavigationState> for landmass::AgentState {
+    fn from(state: NavigationState) -> Self {
         match state {
-            AgentState::Idle => landmass::AgentState::Idle,
-            AgentState::ReachedTarget => landmass::AgentState::ReachedTarget,
-            AgentState::ReachedAnimationLink => landmass::AgentState::ReachedAnimationLink,
-            AgentState::UsingAnimationLink => landmass::AgentState::UsingAnimationLink,
-            AgentState::Moving => landmass::AgentState::Moving,
-            AgentState::AgentNotOnNavMesh => landmass::AgentState::AgentNotOnNavMesh,
-            AgentState::TargetNotOnNavMesh => landmass::AgentState::TargetNotOnNavMesh,
-            AgentState::NoPath => landmass::AgentState::NoPath,
-            AgentState::Paused => landmass::AgentState::Paused,
+            NavigationState::Idle => landmass::AgentState::Idle,
+            NavigationState::ReachedTarget => landmass::AgentState::ReachedTarget,
+            NavigationState::ReachedAnimationLink => landmass::AgentState::ReachedAnimationLink,
+            NavigationState::UsingAnimationLink => landmass::AgentState::UsingAnimationLink,
+            NavigationState::Moving => landmass::AgentState::Moving,
+            NavigationState::AgentNotOnNavMesh => landmass::AgentState::AgentNotOnNavMesh,
+            NavigationState::TargetNotOnNavMesh => landmass::AgentState::TargetNotOnNavMesh,
+            NavigationState::NoPath => landmass::AgentState::NoPath,
+            NavigationState::Paused => landmass::AgentState::Paused,
         }
     }
 }

@@ -5,7 +5,6 @@ use bon::{Builder, builder};
 use spacetimedb::{ReducerContext, ScheduleAt, Table, table};
 
 use crate::{
-    behavior,
     navigation::{self, NavigationAgent, NavigationAgentId},
     utils::Entity,
 };
@@ -74,6 +73,7 @@ pub fn tick_world(
     ctx: &ReducerContext,
     world_id: WorldId,
     scheduled_at: ScheduleAt,
+    characters: impl Iterator<Item = navigation::Character>,
     post_navigation_hook: fn(
         &ReducerContext,
         WorldId,
@@ -88,6 +88,6 @@ pub fn tick_world(
 
     let world = World::find(ctx, world_id).expect("World not found");
 
-    let updated_agents = navigation::tick_navigation(ctx, world, delta_time);
+    let updated_agents = navigation::tick_navigation(ctx, world, delta_time, characters);
     post_navigation_hook(ctx, world_id, delta_time, &updated_agents);
 }

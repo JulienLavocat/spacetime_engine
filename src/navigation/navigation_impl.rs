@@ -1,12 +1,13 @@
 use std::{collections::HashMap, sync::Arc};
 
 use landmass::{
-    Agent, Archipelago as LmArchipelago, ArchipelagoOptions, Island, PointSampleDistance3d,
-    Transform, ValidNavigationMesh,
+    Agent, Archipelago as LmArchipelago, ArchipelagoOptions, Character as LmCharacter, Island,
+    PointSampleDistance3d, Transform, ValidNavigationMesh,
 };
 use spacetimedb::ReducerContext;
 
 use crate::{
+    math::Vec3,
     navigation::{
         NavigationAgent, NavigationAgentId, coordinates::XYZ, validated_navmesh::NavMesh,
     },
@@ -16,10 +17,22 @@ use crate::{
 
 pub type Archipelago = LmArchipelago<XYZ>;
 
+/// A character in the navigation system, used for collision avoidance.
+/// Agents are aware of characters and will avoid them when planning their paths.
+pub struct Character {
+    /// The position of the character.
+    pub position: Vec3,
+    /// The velocity of the character.
+    pub velocity: Vec3,
+    /// The radius of the character.
+    pub radius: f32,
+}
+
 pub(crate) fn tick_navigation(
     ctx: &ReducerContext,
     world: World,
     delta_time: f32,
+    characters: impl Iterator<Item = Character>,
 ) -> HashMap<NavigationAgentId, NavigationAgent> {
     let mut sw = LogStopwatch::new(
         ctx,
@@ -85,6 +98,14 @@ pub(crate) fn tick_navigation(
         agents.insert(agent_id, eng_agent);
     }
 
+    for character in characters {
+        archipelago.add_character(LmCharacter {
+            position: character.position,
+            velocity: character.velocity,
+            radius: character.radius,
+        });
+    }
+
     sw.span("update_archipelago");
     archipelago.update(&mut ctx.rng(), delta_time);
 
@@ -108,7 +129,6 @@ pub(crate) fn tick_navigation(
         let navagent = eng_agent.update(ctx);
         updated_agents.insert(navagent.id, navagent);
     }
-    sw.end();
 
     updated_agents
 }
