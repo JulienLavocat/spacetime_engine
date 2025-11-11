@@ -21,7 +21,12 @@ pub(crate) fn tick_navigation(
     world: World,
     delta_time: f32,
 ) -> HashMap<NavigationAgentId, NavigationAgent> {
-    let mut sw = LogStopwatch::new(ctx, &world, "navigation_tick".to_string());
+    let mut sw = LogStopwatch::new(
+        ctx,
+        &world,
+        "navigation_tick".to_string(),
+        world.debug_navigation,
+    );
 
     sw.span("build_archipelago");
     let radius = 0.5;

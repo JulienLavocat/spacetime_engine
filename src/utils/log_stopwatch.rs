@@ -16,8 +16,14 @@ impl LogStopwatch {
     /// allow for timing of individual spans within the event.
     /// Not every event will be logged, only a sample based on the world's
     /// debug_sample_rate.
-    pub fn new(ctx: &ReducerContext, world: &World, name: String) -> Self {
-        let should_sample = world.debug && ctx.random::<f32>() <= world.debug_sample_rate;
+    pub fn new(
+        ctx: &ReducerContext,
+        world: &World,
+        name: String,
+        context_debug_enabled: bool,
+    ) -> Self {
+        let should_sample =
+            world.debug && context_debug_enabled && ctx.random::<f32>() <= world.debug_sample_rate;
         if should_sample {
             info!("--------- {name} begin ---------");
         }
