@@ -74,13 +74,7 @@ pub fn tick_world(
     world_id: WorldId,
     scheduled_at: ScheduleAt,
     characters: impl Iterator<Item = navigation::Character>,
-    post_navigation_hook: fn(
-        &ReducerContext,
-        WorldId,
-        f32,
-        &HashMap<NavigationAgentId, NavigationAgent>,
-    ),
-) {
+) -> HashMap<NavigationAgentId, NavigationAgent> {
     let delta_time = match scheduled_at {
         ScheduleAt::Interval(duration) => duration.to_duration_abs().as_secs_f32(),
         _ => panic!("Expected ScheduleAt to be Interval"),
@@ -88,6 +82,5 @@ pub fn tick_world(
 
     let world = World::find(ctx, world_id).expect("World not found");
 
-    let updated_agents = navigation::tick_navigation(ctx, world, delta_time, characters);
-    post_navigation_hook(ctx, world_id, delta_time, &updated_agents);
+    navigation::tick_navigation(ctx, world, delta_time, characters)
 }
