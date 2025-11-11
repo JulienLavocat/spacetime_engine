@@ -65,9 +65,29 @@ fn execute_behavior_tree<T>(
             }
             Status::Failure
         }
+        Behavior::If(cond, success, failure) => {
+            if execute_behavior_tree(ctx, world, delta_time, cond, exec) == Status::Success {
+                execute_behavior_tree(ctx, world, delta_time, success, exec)
+            } else {
+                execute_behavior_tree(ctx, world, delta_time, failure, exec)
+            }
+        }
+
+        Behavior::Fail(child) => match execute_behavior_tree(ctx, world, delta_time, child, exec) {
+            Status::Success => Status::Failure,
+            Status::Failure => Status::Success,
+            Status::Running => Status::Running,
+        },
+        Behavior::AlwaysSucceed(child) => {
+            match execute_behavior_tree(ctx, world, delta_time, child, exec) {
+                Status::Success => Status::Success,
+                Status::Failure => Status::Success,
+                Status::Running => Status::Running,
+            }
+        }
         _ => {
             panic!(
-                "Unsupported behavior node type, only Action, Sequence, and Select are supported"
+                "Unsupported behavior node type, only Action, Sequence, If, and Select are supported"
             );
         }
     }
