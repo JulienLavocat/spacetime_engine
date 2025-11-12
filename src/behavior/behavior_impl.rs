@@ -4,7 +4,7 @@ use spacetimedb::ReducerContext;
 
 use crate::{
     behavior::behavior_state::{BehaviorTree, BehaviorTreeId},
-    utils::Entity,
+    utils::{Entity, LogStopwatch},
     world::World,
 };
 
@@ -28,11 +28,19 @@ pub fn tick_behavior<'a, T, E>(
     T: DeserializeOwned,
     E: BehaviorExecutor<T> + 'a,
 {
+    let mut sw = LogStopwatch::new(
+        ctx,
+        world,
+        "behavior_tree".to_string(),
+        world.debug_behavior_trees,
+    );
+    sw.span("load_behavior_tree");
     let bt = BehaviorTree::find(ctx, tree_id).expect("BehaviorTree not found");
     let (behavior, _): (Behavior<T>, _) =
         bincode::serde::decode_from_slice(&bt.behavior, bincode::config::standard())
             .expect("Failed to deserialize behavior tree");
 
+    sw.span("execute_behavior_tree");
     for entity_exec in states.iter_mut() {
         execute_behavior_tree(ctx, world, delta_time, &behavior, entity_exec);
     }

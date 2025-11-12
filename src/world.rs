@@ -24,6 +24,8 @@ pub struct World {
     pub debug: bool,
     #[builder(default = debug)]
     pub debug_navigation: bool,
+    #[builder(default = debug)]
+    pub debug_behavior_trees: bool,
     #[builder(default = 0.05)]
     /// The rate at which to sample debug information, between 0.0 and 1.0.
     pub debug_sample_rate: f32,
