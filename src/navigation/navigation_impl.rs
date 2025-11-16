@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 
 use landmass::{
-    Agent, Archipelago as LmArchipelago, ArchipelagoOptions, Character as LmCharacter, Island,
+    Archipelago as LmArchipelago, ArchipelagoOptions, Character as LmCharacter, Island,
     PointSampleDistance3d, Transform, ValidNavigationMesh,
 };
 use spacetimedb::ReducerContext;
@@ -83,18 +83,7 @@ pub(crate) fn tick_navigation(
     let mut agents = HashMap::new();
 
     for eng_agent in NavigationAgent::iter(ctx, world.id) {
-        let mut lm = Agent::create(
-            eng_agent.position,
-            eng_agent.velocity,
-            eng_agent.radius,
-            eng_agent.desired_speed,
-            eng_agent.max_speed,
-        );
-        lm.current_target = eng_agent.current_target;
-        lm.target_reached_condition = eng_agent.target_reached_condition.into();
-        lm.state = eng_agent.state.into();
-
-        let agent_id = archipelago.add_agent(lm);
+        let agent_id = archipelago.add_agent((&eng_agent).into());
         agents.insert(agent_id, eng_agent);
     }
 
@@ -116,18 +105,18 @@ pub(crate) fn tick_navigation(
         let lm_agent = archipelago.get_agent(lm_agent_id).unwrap();
         let velocity = lm_agent.get_desired_velocity();
 
-        eng_agent.velocity = *velocity;
-        let new_pos = eng_agent.position + velocity * delta_time;
+        eng_agent.set_velocity(*velocity);
+        let new_pos = eng_agent.position() + velocity * delta_time;
         if let Ok(point) = archipelago.sample_point(
             new_pos,
             &archipelago.archipelago_options.point_sample_distance,
         ) {
-            eng_agent.position = point.point();
+            eng_agent.set_position(point.point());
         }
 
-        eng_agent.state = lm_agent.state().into();
+        eng_agent.set_state(lm_agent.state().into());
         let navagent = eng_agent.update(ctx);
-        updated_agents.insert(navagent.id, navagent);
+        updated_agents.insert(navagent.id(), navagent);
     }
 
     updated_agents

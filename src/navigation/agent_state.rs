@@ -7,7 +7,7 @@ pub enum NavigationState {
     Idle,
     /// The agent has reached their target. The agent may resume moving if the
     /// target moves or otherwise changes.
-    ReachedTarget,
+    ReachedDestination,
     /// The agent has reached an animation link along its path to the target.
     ///
     /// See [`Agent::reached_animation_link`] for details about the link.
@@ -30,7 +30,7 @@ impl From<landmass::AgentState> for NavigationState {
     fn from(state: landmass::AgentState) -> Self {
         match state {
             landmass::AgentState::Idle => NavigationState::Idle,
-            landmass::AgentState::ReachedTarget => NavigationState::ReachedTarget,
+            landmass::AgentState::ReachedTarget => NavigationState::ReachedDestination,
             landmass::AgentState::ReachedAnimationLink => NavigationState::ReachedAnimationLink,
             landmass::AgentState::UsingAnimationLink => NavigationState::UsingAnimationLink,
             landmass::AgentState::Moving => NavigationState::Moving,
@@ -46,7 +46,7 @@ impl From<NavigationState> for landmass::AgentState {
     fn from(state: NavigationState) -> Self {
         match state {
             NavigationState::Idle => landmass::AgentState::Idle,
-            NavigationState::ReachedTarget => landmass::AgentState::ReachedTarget,
+            NavigationState::ReachedDestination => landmass::AgentState::ReachedTarget,
             NavigationState::ReachedAnimationLink => landmass::AgentState::ReachedAnimationLink,
             NavigationState::UsingAnimationLink => landmass::AgentState::UsingAnimationLink,
             NavigationState::Moving => landmass::AgentState::Moving,
