@@ -7,7 +7,7 @@ use spacetimedb::{ReducerContext, ScheduleAt, Table, table};
 use crate::{
     collisions,
     navigation::{self, NavigationAgent, NavigationAgentId},
-    utils::Entity,
+    utils::{Entity, get_delta_time},
 };
 
 pub type WorldId = u64;
@@ -78,8 +78,8 @@ impl Entity for World {
         });
     }
 
-    fn count(ctx: &ReducerContext) -> usize {
-        ctx.db.steng_world().iter().count()
+    fn count(ctx: &ReducerContext) -> u64 {
+        ctx.db.steng_world().count()
     }
 }
 
@@ -89,10 +89,7 @@ pub fn tick_world(
     scheduled_at: ScheduleAt,
     characters: impl Iterator<Item = navigation::Character>,
 ) -> HashMap<NavigationAgentId, NavigationAgent> {
-    let delta_time = match scheduled_at {
-        ScheduleAt::Interval(duration) => duration.to_duration_abs().as_secs_f32(),
-        _ => panic!("Expected ScheduleAt to be Interval"),
-    };
+    let delta_time = get_delta_time(scheduled_at);
 
     let world = World::find(ctx, world_id).expect("World not found");
 

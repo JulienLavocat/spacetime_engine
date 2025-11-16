@@ -12,7 +12,7 @@ use crate::{
 pub type TriggerId = u64;
 
 #[table(name = steng_triggers)]
-#[derive(Builder)]
+#[derive(Builder, Clone, Debug)]
 /// Represents a trigger volume in the world that can detect when entities enter or exit it.
 /// Triggers are often used for area-based events, such as triggering animations, area of effect spells,
 /// spawning enemies, or activating mechanisms when a player enters a specific area.

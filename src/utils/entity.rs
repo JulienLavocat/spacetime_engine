@@ -71,5 +71,5 @@ pub trait Entity {
     fn clear(ctx: &ReducerContext);
 
     /// Count all entities
-    fn count(ctx: &ReducerContext) -> usize;
+    fn count(ctx: &ReducerContext) -> u64;
 }

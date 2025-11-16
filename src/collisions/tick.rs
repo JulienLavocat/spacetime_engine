@@ -58,6 +58,7 @@ pub fn tick_collisions(ctx: &ReducerContext, world: &World) {
         &mut raycasts,
         &mut triggers,
     );
+    sw.end();
 }
 
 fn run_broad_phase(
@@ -183,11 +184,6 @@ fn run_narrow_phase(
                 &rigid_body_isometry,
                 rigid_body_collider,
             ) {
-                log::trace!(
-                    "Trigger#{} intersects RigidBody#{}",
-                    trigger.id,
-                    rigid_body.id
-                );
                 valid_hits.push(rigid_body_id);
             }
         }

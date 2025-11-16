@@ -17,19 +17,19 @@ pub struct BehaviorTree {
 }
 
 impl Entity for BehaviorTree {
-    fn insert(self, ctx: &spacetimedb::ReducerContext) -> Self {
+    fn insert(self, ctx: &ReducerContext) -> Self {
         ctx.db.steng_behavior_tree().insert(self)
     }
 
-    fn find(ctx: &spacetimedb::ReducerContext, id: u64) -> Option<Self> {
+    fn find(ctx: &ReducerContext, id: u64) -> Option<Self> {
         ctx.db.steng_behavior_tree().id().find(id)
     }
 
-    fn iter(ctx: &spacetimedb::ReducerContext) -> impl Iterator<Item = Self> {
+    fn iter(ctx: &ReducerContext) -> impl Iterator<Item = Self> {
         ctx.db.steng_behavior_tree().iter()
     }
 
-    fn as_map(ctx: &spacetimedb::ReducerContext) -> std::collections::HashMap<u64, Self> {
+    fn as_map(ctx: &ReducerContext) -> HashMap<u64, Self> {
         ctx.db
             .steng_behavior_tree()
             .iter()
@@ -37,26 +37,26 @@ impl Entity for BehaviorTree {
             .collect()
     }
 
-    fn as_vec(ctx: &spacetimedb::ReducerContext) -> Vec<Self> {
+    fn as_vec(ctx: &ReducerContext) -> Vec<Self> {
         ctx.db.steng_behavior_tree().iter().collect()
     }
 
-    fn update(self, ctx: &spacetimedb::ReducerContext) -> Self {
+    fn update(self, ctx: &ReducerContext) -> Self {
         ctx.db.steng_behavior_tree().id().update(self)
     }
 
-    fn delete(&self, ctx: &spacetimedb::ReducerContext) {
+    fn delete(&self, ctx: &ReducerContext) {
         ctx.db.steng_behavior_tree().id().delete(self.id);
     }
 
-    fn clear(ctx: &spacetimedb::ReducerContext) {
+    fn clear(ctx: &ReducerContext) {
         ctx.db.steng_behavior_tree().iter().for_each(|entry| {
             ctx.db.steng_behavior_tree().id().delete(entry.id);
         });
     }
 
-    fn count(ctx: &ReducerContext) -> usize {
-        ctx.db.steng_behavior_tree().iter().count()
+    fn count(ctx: &ReducerContext) -> u64 {
+        ctx.db.steng_behavior_tree().count()
     }
 }
 

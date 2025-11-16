@@ -91,13 +91,6 @@ impl ShapeWrapper {
             other.as_parry_shape(),
         );
 
-        log::trace!(
-            "Intersection test between {:?} and {:?} resulted in {:?}",
-            self,
-            other,
-            result
-        );
-
         result.unwrap_or_default()
     }
 }
