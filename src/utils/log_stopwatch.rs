@@ -23,7 +23,7 @@ impl LogStopwatch {
         context_debug_enabled: bool,
     ) -> Self {
         let should_sample =
-            world.debug && context_debug_enabled && ctx.random::<f32>() <= world.debug_sample_rate;
+            world.debug || context_debug_enabled && ctx.random::<f32>() <= world.debug_sample_rate;
         if should_sample {
             info!("--------- {name} begin ---------");
         }

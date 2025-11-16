@@ -30,13 +30,13 @@ pub struct Character {
 
 pub(crate) fn tick_navigation(
     ctx: &ReducerContext,
-    world: World,
+    world: &World,
     delta_time: f32,
     characters: impl Iterator<Item = Character>,
 ) -> HashMap<NavigationAgentId, NavigationAgent> {
     let mut sw = LogStopwatch::new(
         ctx,
-        &world,
+        world,
         "navigation_tick".to_string(),
         world.debug_navigation,
     );

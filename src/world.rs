@@ -5,6 +5,7 @@ use bon::{Builder, builder};
 use spacetimedb::{ReducerContext, ScheduleAt, Table, table};
 
 use crate::{
+    collisions,
     navigation::{self, NavigationAgent, NavigationAgentId},
     utils::Entity,
 };
@@ -19,6 +20,11 @@ pub struct World {
     #[builder(default = 0)]
     /// The unique ID of the world.
     pub id: WorldId,
+
+    /// The factor by which to expand the AABB during broad-phase collision detection.
+    #[builder(default = 0.0)]
+    pub aabb_dilation_factor: f32,
+
     #[builder(default = false)]
     /// If true, enables debug logging and print timings for various systems.
     pub debug: bool,
@@ -26,6 +32,8 @@ pub struct World {
     pub debug_navigation: bool,
     #[builder(default = debug)]
     pub debug_behavior_trees: bool,
+    #[builder(default = debug)]
+    pub debug_collisions: bool,
     #[builder(default = 0.05)]
     /// The rate at which to sample debug information, between 0.0 and 1.0.
     pub debug_sample_rate: f32,
@@ -69,6 +77,10 @@ impl Entity for World {
             world.delete(ctx);
         });
     }
+
+    fn count(ctx: &ReducerContext) -> usize {
+        ctx.db.steng_world().iter().count()
+    }
 }
 
 pub fn tick_world(
@@ -84,5 +96,8 @@ pub fn tick_world(
 
     let world = World::find(ctx, world_id).expect("World not found");
 
-    navigation::tick_navigation(ctx, world, delta_time, characters)
+    let agents = navigation::tick_navigation(ctx, &world, delta_time, characters);
+    collisions::tick_collisions(ctx, &world);
+
+    agents
 }

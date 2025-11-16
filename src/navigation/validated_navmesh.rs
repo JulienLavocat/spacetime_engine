@@ -55,4 +55,8 @@ impl WorldEntity for NavMesh {
     fn iter(ctx: &ReducerContext, world_id: WorldId) -> impl Iterator<Item = Self> {
         ctx.db.steng_navmesh().world_id().filter(world_id)
     }
+
+    fn count(ctx: &ReducerContext, world_id: WorldId) -> usize {
+        ctx.db.steng_navmesh().world_id().filter(world_id).count()
+    }
 }

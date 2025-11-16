@@ -54,6 +54,10 @@ impl Entity for BehaviorTree {
             ctx.db.steng_behavior_tree().id().delete(entry.id);
         });
     }
+
+    fn count(ctx: &ReducerContext) -> usize {
+        ctx.db.steng_behavior_tree().iter().count()
+    }
 }
 
 impl BehaviorTree {

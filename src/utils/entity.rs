@@ -33,6 +33,9 @@ pub trait WorldEntity {
 
     /// Clear all entities for a specific world
     fn clear(ctx: &ReducerContext, world_id: WorldId);
+
+    /// Count all entities for a specific world
+    fn count(ctx: &ReducerContext, world_id: WorldId) -> usize;
 }
 
 /// A generic entity trait for entities that are not tied to a specific world.
@@ -66,4 +69,7 @@ pub trait Entity {
 
     /// Clear all entities
     fn clear(ctx: &ReducerContext);
+
+    /// Count all entities
+    fn count(ctx: &ReducerContext) -> usize;
 }

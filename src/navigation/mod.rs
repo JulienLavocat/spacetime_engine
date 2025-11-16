@@ -1,5 +1,4 @@
 mod agent_state;
-mod archipelago;
 mod coordinates;
 mod external_navmesh;
 mod navigation_agent;

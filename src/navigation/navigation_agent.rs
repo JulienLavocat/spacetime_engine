@@ -107,4 +107,12 @@ impl WorldEntity for NavigationAgent {
     fn iter(ctx: &ReducerContext, world_id: WorldId) -> impl Iterator<Item = Self> {
         ctx.db.steng_navigation_agent().world_id().filter(world_id)
     }
+
+    fn count(ctx: &ReducerContext, world_id: WorldId) -> usize {
+        ctx.db
+            .steng_navigation_agent()
+            .world_id()
+            .filter(world_id)
+            .count()
+    }
 }

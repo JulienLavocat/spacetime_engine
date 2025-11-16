@@ -5,9 +5,10 @@ edition = "2024"
 
 [dependencies]
 landmass = { git = "https://github.com/JulienLavocat/landmass", rev = "6e97b9ad7a8a9b0ed606e8ba1e35b2d2a05afda4" }
-spacetimedb = { version = "1.6.0" }
+spacetimedb = { version = "1.8.0" }
 log = { version = "0.4.28" }
 bon = { version = "3.8.1" }
 serde = { version = "1.0.228", features = ["derive"] }
 bincode = { version = "2.0.1", features = ["serde"] }
 piston-ai_behavior = "0.33.0"
+parry3d = "0.25.3"
