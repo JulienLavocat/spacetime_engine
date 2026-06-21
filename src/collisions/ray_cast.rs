@@ -1,7 +1,7 @@
 use core::f32;
 use std::hash::Hash;
 
-use bon::{Builder, builder};
+use bon::Builder;
 use spacetimedb::{ReducerContext, SpacetimeType, Table, table};
 
 use crate::{math::Vec3, utils::WorldEntity, world::WorldId};
@@ -46,7 +46,7 @@ impl PartialEq for RayCastHit {
     }
 }
 
-#[table(name = steng_raycasts)]
+#[table(accessor = steng_raycasts)]
 #[derive(Builder, Debug, Clone, PartialEq)]
 pub struct RayCast {
     /// Unique identifier for the raycast.

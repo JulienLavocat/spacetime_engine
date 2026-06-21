@@ -13,7 +13,7 @@ use crate::{
 
 pub type NavigationAgentId = u64;
 
-#[table(name = steng_navigation_agent)]
+#[table(accessor = steng_navigation_agent)]
 #[derive(Clone, Debug, Builder)]
 pub struct NavigationAgent {
     /// The unique ID of the agent. This ID is unique across all worlds.

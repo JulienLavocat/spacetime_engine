@@ -1,4 +1,4 @@
-use spacetimedb::ReducerContext;
+use spacetimedb::{ReducerContext, ViewContext};
 
 use crate::world::WorldId;
 
@@ -38,6 +38,16 @@ pub trait WorldEntity {
     fn count(ctx: &ReducerContext, world_id: WorldId) -> usize;
 }
 
+pub trait WorldEntityView {
+    /// Find an entity by its ID in a view context for a specific world
+    fn find(ctx: &ViewContext, world_id: WorldId, id: u64) -> Option<Self>
+    where
+        Self: Sized;
+
+    /// Get an iterator over all entities for a specific world in a view context
+    fn iter(ctx: &ViewContext, world_id: WorldId) -> impl Iterator<Item = Self>;
+}
+
 /// A generic entity trait for entities that are not tied to a specific world.
 pub trait Entity {
     /// Insert a new entity
@@ -72,4 +82,12 @@ pub trait Entity {
 
     /// Count all entities
     fn count(ctx: &ReducerContext) -> u64;
+}
+
+/// A generic entity view trait for read-only views of entities.
+pub trait EntityView {
+    /// Find an entity by its ID in a view context
+    fn find(ctx: &ViewContext, id: u64) -> Option<Self>
+    where
+        Self: Sized;
 }

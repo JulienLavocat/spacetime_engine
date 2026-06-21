@@ -1,4 +1,4 @@
-use bon::{Builder, builder};
+use bon::Builder;
 use parry3d::na::Isometry3;
 use spacetimedb::{ReducerContext, Table, table};
 
@@ -11,7 +11,7 @@ use crate::{
 
 pub type TriggerId = u64;
 
-#[table(name = steng_triggers)]
+#[table(accessor = steng_triggers)]
 #[derive(Builder, Clone, Debug)]
 /// Represents a trigger volume in the world that can detect when entities enter or exit it.
 /// Triggers are often used for area-based events, such as triggering animations, area of effect spells,

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use bon::{Builder, builder};
+use bon::Builder;
 
 use spacetimedb::{ReducerContext, ScheduleAt, Table, table};
 
@@ -12,7 +12,7 @@ use crate::{
 
 pub type WorldId = u64;
 
-#[table(name = steng_world)]
+#[table(accessor = steng_world)]
 #[derive(Builder, Clone, Copy)]
 pub struct World {
     #[primary_key]

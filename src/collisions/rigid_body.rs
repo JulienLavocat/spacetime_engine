@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use bon::{Builder, builder};
+use bon::Builder;
 use parry3d::na::Isometry3;
 use spacetimedb::{ReducerContext, SpacetimeType, Table, table};
 
@@ -20,7 +20,7 @@ pub enum RigidBodyType {
     Kinematic,
 }
 
-#[table(name = steng_rigid_bodies, public)]
+#[table(accessor = steng_rigid_bodies, public)]
 #[derive(Builder)]
 pub struct RigidBody {
     #[primary_key]
