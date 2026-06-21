@@ -1,5 +1,5 @@
 use bon::Builder;
-use parry3d::na::Isometry3;
+use parry3d::math::Pose3;
 use spacetimedb::{ReducerContext, Table, table};
 
 use crate::{
@@ -103,14 +103,14 @@ impl WorldEntity for Trigger {
     }
 }
 
-impl From<Trigger> for Isometry3<f32> {
+impl From<Trigger> for Pose3 {
     fn from(trigger: Trigger) -> Self {
-        Isometry3::from_parts(trigger.position.into(), trigger.rotation.into())
+        Pose3::from_parts(trigger.position.into(), trigger.rotation.into())
     }
 }
 
-impl From<&Trigger> for Isometry3<f32> {
+impl From<&Trigger> for Pose3 {
     fn from(trigger: &Trigger) -> Self {
-        Isometry3::from_parts(trigger.position.into(), trigger.rotation.into())
+        Pose3::from_parts(trigger.position.into(), trigger.rotation.into())
     }
 }

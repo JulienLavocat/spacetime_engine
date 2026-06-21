@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use parry3d::{
-    na::Isometry3,
+    math::Pose3,
     partitioning::{Bvh, BvhBuildStrategy, TraversalAction},
     query::Ray,
 };
@@ -79,7 +79,7 @@ fn run_broad_phase(
         let position = rb.position.into();
         let rotation = rb.rotation.into();
         let aabb = collider.collision_aabb(
-            &Isometry3::from_parts(position, rotation),
+            &Pose3::from_parts(position, rotation),
             world.aabb_dilation_factor,
         );
 
@@ -113,7 +113,7 @@ fn run_broad_phase(
     let mut trigger_hits: HashMap<TriggerId, Vec<RigidBodyId>> = HashMap::new();
     for trigger in triggers.values() {
         let collider = colliders.get(&trigger.collider_id).unwrap();
-        let aabb = collider.collision_aabb(&Isometry3::identity(), world.aabb_dilation_factor);
+        let aabb = collider.collision_aabb(&Pose3::IDENTITY, world.aabb_dilation_factor);
 
         let hits = bvh
             .intersect_aabb(&aabb)
@@ -149,7 +149,7 @@ fn run_narrow_phase(
             let rigid_body = rigid_bodies.get(&rigid_body_id).unwrap();
             let rigid_body_collider = colliders.get(&rigid_body.collider_id).unwrap();
             let isometry =
-                Isometry3::from_parts(rigid_body.position.into(), rigid_body.rotation.into());
+                Pose3::from_parts(rigid_body.position.into(), rigid_body.rotation.into());
             if let Some(hit) = rigid_body_collider.cast_ray_and_get_normal(
                 &isometry,
                 &ray,
@@ -176,9 +176,9 @@ fn run_narrow_phase(
             let rigid_body = rigid_bodies.get(&rigid_body_id).unwrap();
             let rigid_body_collider = colliders.get(&rigid_body.collider_id).unwrap();
             let trigger_isometry =
-                Isometry3::from_parts(trigger.position.into(), trigger.rotation.into());
+                Pose3::from_parts(trigger.position.into(), trigger.rotation.into());
             let rigid_body_isometry =
-                Isometry3::from_parts(rigid_body.position.into(), rigid_body.rotation.into());
+                Pose3::from_parts(rigid_body.position.into(), rigid_body.rotation.into());
             if trigger_collider.intersects(
                 &trigger_isometry,
                 &rigid_body_isometry,

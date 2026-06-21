@@ -5,7 +5,7 @@ use std::{
 };
 
 use landmass::Vec3 as LmVec3;
-use parry3d::na::{Point3, Translation3, Unit, Vector3};
+use parry3d::math::Vec3 as PVec3;
 use serde::{Deserialize, Serialize};
 use spacetimedb::SpacetimeType;
 
@@ -432,104 +432,8 @@ impl From<&Vec3> for LmVec3 {
     }
 }
 
-impl From<Translation3<f32>> for Vec3 {
-    fn from(translation: Translation3<f32>) -> Self {
-        Self {
-            x: translation.x,
-            y: translation.y,
-            z: translation.z,
-        }
-    }
-}
-
-impl From<&Translation3<f32>> for Vec3 {
-    fn from(translation: &Translation3<f32>) -> Self {
-        Self {
-            x: translation.x,
-            y: translation.y,
-            z: translation.z,
-        }
-    }
-}
-
-impl From<Vec3> for Translation3<f32> {
-    fn from(vec: Vec3) -> Self {
-        Self::new(vec.x, vec.y, vec.z)
-    }
-}
-
-impl From<&Vec3> for Translation3<f32> {
-    fn from(vec: &Vec3) -> Self {
-        Self::new(vec.x, vec.y, vec.z)
-    }
-}
-
-impl From<Unit<Vector3<f32>>> for Vec3 {
-    fn from(unit: Unit<Vector3<f32>>) -> Self {
-        Self {
-            x: unit.x,
-            y: unit.y,
-            z: unit.z,
-        }
-    }
-}
-
-impl From<&Unit<Vector3<f32>>> for Vec3 {
-    fn from(unit: &Unit<Vector3<f32>>) -> Self {
-        Self {
-            x: unit.x,
-            y: unit.y,
-            z: unit.z,
-        }
-    }
-}
-
-impl From<Vec3> for Unit<Vector3<f32>> {
-    fn from(vec: Vec3) -> Self {
-        Unit::new_normalize(Vector3::new(vec.x, vec.y, vec.z))
-    }
-}
-
-impl From<&Vec3> for Unit<Vector3<f32>> {
-    fn from(vec: &Vec3) -> Self {
-        Unit::new_normalize(Vector3::new(vec.x, vec.y, vec.z))
-    }
-}
-
-impl From<Point3<f32>> for Vec3 {
-    fn from(point: Point3<f32>) -> Self {
-        Self {
-            x: point.x,
-            y: point.y,
-            z: point.z,
-        }
-    }
-}
-
-impl From<&Point3<f32>> for Vec3 {
-    fn from(point: &Point3<f32>) -> Self {
-        Self {
-            x: point.x,
-            y: point.y,
-            z: point.z,
-        }
-    }
-}
-
-impl From<Vec3> for Point3<f32> {
-    fn from(vec: Vec3) -> Self {
-        Self::new(vec.x, vec.y, vec.z)
-    }
-}
-
-impl From<&Vec3> for Point3<f32> {
-    fn from(vec: &Vec3) -> Self {
-        Self::new(vec.x, vec.y, vec.z)
-    }
-}
-
-impl From<Vector3<f32>> for Vec3 {
-    fn from(vector: Vector3<f32>) -> Self {
+impl From<PVec3> for Vec3 {
+    fn from(vector: PVec3) -> Self {
         Self {
             x: vector.x,
             y: vector.y,
@@ -538,8 +442,8 @@ impl From<Vector3<f32>> for Vec3 {
     }
 }
 
-impl From<&Vector3<f32>> for Vec3 {
-    fn from(vector: &Vector3<f32>) -> Self {
+impl From<&PVec3> for Vec3 {
+    fn from(vector: &PVec3) -> Self {
         Self {
             x: vector.x,
             y: vector.y,
@@ -548,13 +452,13 @@ impl From<&Vector3<f32>> for Vec3 {
     }
 }
 
-impl From<Vec3> for Vector3<f32> {
+impl From<Vec3> for PVec3 {
     fn from(vec: Vec3) -> Self {
         Self::new(vec.x, vec.y, vec.z)
     }
 }
 
-impl From<&Vec3> for Vector3<f32> {
+impl From<&Vec3> for PVec3 {
     fn from(vec: &Vec3) -> Self {
         Self::new(vec.x, vec.y, vec.z)
     }

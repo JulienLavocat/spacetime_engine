@@ -1,4 +1,4 @@
-use parry3d::na::UnitQuaternion;
+use parry3d::math::Rot3;
 use serde::{Deserialize, Serialize};
 use spacetimedb::SpacetimeType;
 
@@ -19,42 +19,36 @@ impl Quat {
     };
 }
 
-impl From<UnitQuaternion<f32>> for Quat {
-    fn from(unit_quat: UnitQuaternion<f32>) -> Self {
-        let quat = unit_quat.quaternion();
+impl From<Rot3> for Quat {
+    fn from(rot: Rot3) -> Self {
         Quat {
-            w: quat.w,
-            x: quat.i,
-            y: quat.j,
-            z: quat.k,
+            x: rot.x,
+            y: rot.y,
+            z: rot.z,
+            w: rot.w,
         }
     }
 }
 
-impl From<&UnitQuaternion<f32>> for Quat {
-    fn from(unit_quat: &UnitQuaternion<f32>) -> Self {
-        let quat = unit_quat.quaternion();
+impl From<&Rot3> for Quat {
+    fn from(rot: &Rot3) -> Self {
         Quat {
-            w: quat.w,
-            x: quat.i,
-            y: quat.j,
-            z: quat.k,
+            x: rot.x,
+            y: rot.y,
+            z: rot.z,
+            w: rot.w,
         }
     }
 }
 
-impl From<Quat> for UnitQuaternion<f32> {
+impl From<Quat> for Rot3 {
     fn from(quat: Quat) -> Self {
-        UnitQuaternion::from_quaternion(parry3d::na::Quaternion::new(
-            quat.w, quat.x, quat.y, quat.z,
-        ))
+        Rot3::from_xyzw(quat.x, quat.y, quat.z, quat.w)
     }
 }
 
-impl From<&Quat> for UnitQuaternion<f32> {
+impl From<&Quat> for Rot3 {
     fn from(quat: &Quat) -> Self {
-        UnitQuaternion::from_quaternion(parry3d::na::Quaternion::new(
-            quat.w, quat.x, quat.y, quat.z,
-        ))
+        Rot3::from_xyzw(quat.x, quat.y, quat.z, quat.w)
     }
 }

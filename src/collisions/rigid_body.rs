@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use bon::Builder;
-use parry3d::na::Isometry3;
+use parry3d::math::Pose3;
 use spacetimedb::{ReducerContext, SpacetimeType, Table, table};
 
 use crate::{
@@ -98,14 +98,14 @@ impl WorldEntity for RigidBody {
     }
 }
 
-impl From<RigidBody> for Isometry3<f32> {
+impl From<RigidBody> for Pose3 {
     fn from(value: RigidBody) -> Self {
-        Isometry3::from_parts(value.position.into(), value.rotation.into())
+        Pose3::from_parts(value.position.into(), value.rotation.into())
     }
 }
 
-impl From<&RigidBody> for Isometry3<f32> {
+impl From<&RigidBody> for Pose3 {
     fn from(value: &RigidBody) -> Self {
-        Isometry3::from_parts(value.position.into(), value.rotation.into())
+        Pose3::from_parts(value.position.into(), value.rotation.into())
     }
 }
