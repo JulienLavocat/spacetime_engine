@@ -4,7 +4,7 @@ use crate::{math::Vec3, utils::WorldEntity, world::WorldId};
 
 use spacetimedb::{ReducerContext, Table, table};
 
-#[table(name = steng_navmesh)]
+#[table(accessor = steng_navmesh)]
 pub struct NavMesh {
     #[primary_key]
     #[auto_inc]

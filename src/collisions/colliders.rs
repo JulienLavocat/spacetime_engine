@@ -16,7 +16,7 @@ pub enum ColliderType {
     Triangle,
 }
 
-#[table(name = steng_colliders, public)]
+#[table(accessor = steng_colliders, public)]
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
 pub struct Collider {
     #[primary_key]

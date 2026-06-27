@@ -28,6 +28,91 @@ pub struct Character {
     pub radius: f32,
 }
 
+// The following code needs long-running procedures to be enabled.
+// #[procedure]
+// pub fn nav_procedure(ctx: &mut ProcedureContext, world_id: WorldId) {
+//     let start_time = ctx.timestamp;
+//     let radius = 0.5;
+//
+//     let mut archipelago = Archipelago::new(ArchipelagoOptions {
+//         point_sample_distance: PointSampleDistance3d {
+//             horizontal_distance: radius,
+//             distance_above: radius * 2.0,
+//             distance_below: radius * 2.0,
+//             vertical_preference_ratio: 2.0,
+//             animation_link_max_vertical_distance: 0.5 * radius,
+//         },
+//         neighbourhood: 10.0 * radius,
+//         avoidance_time_horizon: 0.5,
+//         obstacle_avoidance_time_horizon: 0.25,
+//         reached_destination_avoidance_responsibility: 0.1,
+//     });
+//
+//     let (islands, agents_to_add) = ctx.with_tx(move |ctx| {
+//         let islands = NavMesh::iter(ctx, world_id)
+//             .map(|navmesh| {
+//                 let translation = navmesh.translation;
+//                 let rotation = navmesh.rotation;
+//
+//                 let navmesh: ValidNavigationMesh<XYZ> =
+//                     bincode::serde::decode_from_slice(&navmesh.data, bincode::config::standard())
+//                         .expect("Failed to decode navmesh")
+//                         .0;
+//                 let navmesh: Arc<ValidNavigationMesh<XYZ>> = Arc::new(navmesh);
+//
+//                 Island::new(
+//                     Transform {
+//                         translation,
+//                         rotation,
+//                     },
+//                     navmesh,
+//                 )
+//             })
+//             .collect::<Vec<_>>();
+//
+//         let agents = NavigationAgent::iter(ctx, world_id).collect::<Vec<_>>();
+//
+//         return (islands, agents);
+//     });
+//
+//     for island in islands {
+//         archipelago.add_island(island);
+//     }
+//
+//     let mut agents = HashMap::new();
+//     for agent in agents_to_add {
+//         let agent_id = archipelago.add_agent((&agent).into());
+//         agents.insert(agent_id, agent);
+//     }
+//
+//     loop {
+//         let delta_time = (ctx.timestamp.time_duration_since(start_time).unwrap())
+//             .to_duration()
+//             .unwrap()
+//             .as_secs_f32();
+//
+//         archipelago.update(&mut ctx.rng(), delta_time);
+//
+//         let mut updated_agents = HashMap::new();
+//         for (lm_agent_id, mut eng_agent) in agents {
+//             let lm_agent = archipelago.get_agent(*lm_agent_id).unwrap();
+//             let velocity = lm_agent.get_desired_velocity();
+//
+//             eng_agent.set_velocity(*velocity);
+//             let new_pos = eng_agent.position() + velocity * delta_time;
+//             if let Ok(point) = archipelago.sample_point(
+//                 new_pos,
+//                 &archipelago.archipelago_options.point_sample_distance,
+//             ) {
+//                 eng_agent.set_position(point.point());
+//             }
+//
+//             eng_agent.set_state(lm_agent.state().into());
+//             updated_agents.insert(eng_agent.id(), eng_agent);
+//         }
+//     }
+// }
+
 pub(crate) fn tick_navigation(
     ctx: &ReducerContext,
     world: &World,

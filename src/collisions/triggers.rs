@@ -1,5 +1,5 @@
-use bon::{Builder, builder};
-use parry3d::na::Isometry3;
+use bon::Builder;
+use parry3d::math::Pose3;
 use spacetimedb::{ReducerContext, Table, table};
 
 use crate::{
@@ -11,7 +11,7 @@ use crate::{
 
 pub type TriggerId = u64;
 
-#[table(name = steng_triggers)]
+#[table(accessor = steng_triggers)]
 #[derive(Builder, Clone, Debug)]
 /// Represents a trigger volume in the world that can detect when entities enter or exit it.
 /// Triggers are often used for area-based events, such as triggering animations, area of effect spells,
@@ -103,14 +103,14 @@ impl WorldEntity for Trigger {
     }
 }
 
-impl From<Trigger> for Isometry3<f32> {
+impl From<Trigger> for Pose3 {
     fn from(trigger: Trigger) -> Self {
-        Isometry3::from_parts(trigger.position.into(), trigger.rotation.into())
+        Pose3::from_parts(trigger.position.into(), trigger.rotation.into())
     }
 }
 
-impl From<&Trigger> for Isometry3<f32> {
+impl From<&Trigger> for Pose3 {
     fn from(trigger: &Trigger) -> Self {
-        Isometry3::from_parts(trigger.position.into(), trigger.rotation.into())
+        Pose3::from_parts(trigger.position.into(), trigger.rotation.into())
     }
 }

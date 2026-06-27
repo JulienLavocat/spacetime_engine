@@ -8,7 +8,7 @@ use crate::utils::Entity;
 
 pub type BehaviorTreeId = u64;
 
-#[table(name = steng_behavior_tree)]
+#[table(accessor = steng_behavior_tree)]
 pub struct BehaviorTree {
     #[primary_key]
     #[auto_inc]

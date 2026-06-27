@@ -1,6 +1,6 @@
 use parry3d::{
     bounding_volume::{Aabb, BoundingVolume},
-    na::{Isometry3, Vector3},
+    math::{Pose3, Vector},
     query::{Ray, RayCast, RayIntersection, intersection_test},
     shape::{Ball, Capsule, Cone, Cuboid, Cylinder, HalfSpace, Shape, Triangle},
 };
@@ -20,7 +20,7 @@ pub enum ShapeWrapper {
 }
 
 impl ShapeWrapper {
-    pub fn collision_aabb(&self, isometry: &Isometry3<f32>, prediction_distance: f32) -> Aabb {
+    pub fn collision_aabb(&self, isometry: &Pose3, prediction_distance: f32) -> Aabb {
         match self {
             ShapeWrapper::Sphere(sphere) => sphere.aabb(isometry).loosened(prediction_distance),
             ShapeWrapper::Plane(plane) => plane.aabb(isometry).loosened(prediction_distance),
@@ -36,7 +36,7 @@ impl ShapeWrapper {
 
     pub fn cast_ray_and_get_normal(
         &self,
-        isometry: &Isometry3<f32>,
+        isometry: &Pose3,
         ray: &Ray,
         max_time_to_impact: f32,
         solid: bool,
@@ -80,8 +80,8 @@ impl ShapeWrapper {
 
     pub fn intersects(
         &self,
-        isometry_a: &Isometry3<f32>,
-        isometry_b: &Isometry3<f32>,
+        isometry_a: &Pose3,
+        isometry_b: &Pose3,
         other: &ShapeWrapper,
     ) -> bool {
         let result = intersection_test(
@@ -106,7 +106,7 @@ impl From<&Collider> for ShapeWrapper {
         match collider.collider_type {
             ColliderType::Sphere => ShapeWrapper::Sphere(Ball::new(collider.radius)),
             ColliderType::Plane => ShapeWrapper::Plane(HalfSpace::new(collider.normal.into())),
-            ColliderType::Cuboid => ShapeWrapper::Cuboid(Cuboid::new(Vector3::new(
+            ColliderType::Cuboid => ShapeWrapper::Cuboid(Cuboid::new(Vector::new(
                 collider.size.x / 2.0,
                 collider.size.y / 2.0,
                 collider.size.z / 2.0,

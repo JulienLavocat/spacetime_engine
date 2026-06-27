@@ -10,7 +10,7 @@ pub type ResourceId = u16;
 pub type StatusId = u16; // buff/debuff IDs
 pub type EntityId = u64; // your game’s entity key
 
-#[table(name = steng_spells)]
+#[table(accessor = steng_spells)]
 pub struct SpellDef {
     pub id: SpellId,
     pub name: String,
@@ -169,7 +169,7 @@ pub struct AttackerVsDefender {
     pub base: i32,
 }
 
-#[table(name = steng_spells_active_casts)]
+#[table(accessor = steng_spells_active_casts)]
 pub struct ActiveCast {
     pub id: u64,
     pub caster: EntityId,
@@ -193,14 +193,14 @@ pub enum TargetInstance {
     Position(Vec3),
 }
 
-#[table(name = steng_spells_cooldowns)]
+#[table(accessor = steng_spells_cooldowns)]
 pub struct Cooldown {
     pub caster: EntityId,
     pub spell_id: SpellId,
     pub ready_at_ms: i64,
 }
 
-#[table(name = steng_spells_status_instances)]
+#[table(accessor = steng_spells_status_instances)]
 pub struct StatusInstance {
     pub id: u64,
     pub status_id: StatusId,
